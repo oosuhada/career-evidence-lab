@@ -1,1 +1,1 @@
-export const BASE_URL = 'https://www.nalab.me' as const;
+export const BASE_URL = 'https://career-evidence.oosu.dev' as const;

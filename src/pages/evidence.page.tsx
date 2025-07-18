@@ -30,6 +30,10 @@ export default function EvidencePage() {
   const [result, setResult] = useState('');
   const [source, setSource] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [githubOwner, setGithubOwner] = useState('oosuhada');
+  const [githubRepo, setGithubRepo] = useState('');
+  const [isImporting, setIsImporting] = useState(false);
+  const [importError, setImportError] = useState('');
 
   useEffect(() => {
     const saved = window.localStorage.getItem(STORAGE_KEY);
@@ -48,7 +52,7 @@ export default function EvidencePage() {
       item.tags.forEach((tag) => counts.set(tag, (counts.get(tag) ?? 0) + 1));
     });
 
-    return [...counts.entries()]
+    return Array.from(counts.entries())
       .map(([name, count]) => ({ name, count, ratio: items.length === 0 ? 0 : count / items.length }))
       .sort((a, b) => b.count - a.count);
   }, [items]);
@@ -86,6 +90,27 @@ export default function EvidencePage() {
     );
   };
 
+  const importGitHub = async () => {
+    if (!githubOwner.trim() || isImporting) return;
+    setIsImporting(true);
+    setImportError('');
+    try {
+      const params = new URLSearchParams({ owner: githubOwner.trim() });
+      if (githubRepo.trim()) params.set('repo', githubRepo.trim());
+      const response = await fetch(`/api/github-evidence?${params.toString()}`);
+      const payload = (await response.json()) as { items?: Evidence[]; error?: string };
+      if (!response.ok || !payload.items) throw new Error(payload.error ?? 'GitHub import failed');
+
+      const incoming = payload.items;
+      const incomingIds = new Set(incoming.map((item) => item.id));
+      persist([...incoming, ...items.filter((item) => !incomingIds.has(item.id))]);
+    } catch (error) {
+      setImportError(error instanceof Error ? error.message : 'GitHub 데이터를 불러오지 못했습니다.');
+    } finally {
+      setIsImporting(false);
+    }
+  };
+
   return (
     <main css={pageCss}>
       <header css={headerCss}>
@@ -95,6 +120,26 @@ export default function EvidencePage() {
         <h1>Evidence Board</h1>
         <p>프로젝트에서 실제로 한 행동을 쌓으면 반복되는 강점이 자동으로 드러납니다.</p>
       </header>
+
+      <section css={panelCss}>
+        <div css={sectionHeaderCss}>
+          <div>
+            <span>SOURCE CONNECTOR</span>
+            <h2>GitHub에서 Evidence 가져오기</h2>
+          </div>
+        </div>
+        <p css={connectorCopyCss}>
+          README, 저장소 설명, 기술 언어와 Topics를 읽어 Source가 연결된 Evidence 후보를 만듭니다. 저장소명을 비우면 최근 개인 저장소를 가져옵니다.
+        </p>
+        <div css={connectorCss}>
+          <input value={githubOwner} onChange={(event) => setGithubOwner(event.target.value)} placeholder="GitHub owner" />
+          <input value={githubRepo} onChange={(event) => setGithubRepo(event.target.value)} placeholder="Repository (optional)" />
+          <button type="button" disabled={isImporting} onClick={importGitHub}>
+            {isImporting ? '가져오는 중…' : 'GitHub 가져오기'}
+          </button>
+        </div>
+        {importError && <p css={errorCss}>{importError}</p>}
+      </section>
 
       <section css={panelCss}>
         <div css={sectionHeaderCss}>
@@ -196,7 +241,14 @@ export default function EvidencePage() {
             <h3>{item.action}</h3>
             {item.result && <p>{item.result}</p>}
             {item.tags.length > 0 && <div css={cardTagsCss}>{item.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>}
-            {item.source && <small>Source · {item.source}</small>}
+            {item.source && (
+              <small>
+                Source ·{' '}
+                <a href={item.source} target="_blank" rel="noreferrer">
+                  {item.source}
+                </a>
+              </small>
+            )}
           </article>
         ))}
       </section>
@@ -316,6 +368,59 @@ const formCss = css`
   }
 `;
 
+const connectorCopyCss = css`
+  margin: -4px 0 14px;
+  color: #687887;
+  font-size: 12px;
+  line-height: 1.6;
+`;
+
+const connectorCss = css`
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) auto;
+  gap: 8px;
+
+  input,
+  button {
+    min-height: 44px;
+    border-radius: 12px;
+    font: inherit;
+  }
+
+  input {
+    min-width: 0;
+    padding: 0 12px;
+    border: 1px solid #dfe8ef;
+    outline: 0;
+    background: #f9fbfd;
+  }
+
+  button {
+    padding: 0 14px;
+    border: 0;
+    background: #426b92;
+    color: white;
+    font-size: 11px;
+    font-weight: 850;
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: progress;
+    opacity: 0.55;
+  }
+
+  @media (width <= 620px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const errorCss = css`
+  margin: 10px 0 0;
+  color: #a45d5d;
+  font-size: 11px;
+`;
+
 const tagGroupCss = css`
   display: grid;
   gap: 9px;
@@ -430,6 +535,11 @@ const evidenceCardCss = css`
     margin-top: 12px;
     color: #98a6b2;
     font-size: 10px;
+  }
+
+  small a {
+    color: inherit;
+    text-underline-offset: 2px;
   }
 `;
 

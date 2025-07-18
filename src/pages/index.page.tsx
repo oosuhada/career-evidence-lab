@@ -146,7 +146,7 @@ const principleGridCss = css`
     line-height: 1.6;
   }
 
-  @media (max-width: 640px) {
+  @media (width <= 640px) {
     grid-template-columns: 1fr;
 
     article {

@@ -1,4 +1,4 @@
-/* eslint-disable unicorn/filename-case */
+ 
 import Head from 'next/head';
 
 import { BASE_URL } from '~/constants/url';
@@ -8,13 +8,13 @@ const DEFAULT_OG_IMAGE = '/default-og.png';
 
 interface Props {
   /**
-   * @description title에 적용될 문자열 입니다. 넣은 문자열 뒤에 ' | 나랩'이 붙습니다.
-   * @default '나의 커리어 DNA 연구소 Na Lab'
+   * @description title에 적용될 문자열 입니다. 넣은 문자열 뒤에 ' | Career Evidence Lab'이 붙습니다.
+   * @default 'Career Evidence Lab'
    */
   title?: string;
   /**
    * @description description에 적용될 문자열 입니다.
-   * @default '익명 피드백으로 나의 직무 강점 찾기'
+   * @default '프로젝트와 소스 링크를 근거로 반복되는 커리어 강점 패턴을 정리합니다.'
    */
   description?: string;
   /**
@@ -31,8 +31,9 @@ const SEO = ({ title, description, ogImage }: Props) => {
   const router = useInternalRouter();
 
   // TODO: 브랜딩에 따라 다르게 나타낼 수 있음
-  const TITLE = title ? `${title} | 나랩` : '나의 커리어 DNA 연구소 Na Lab';
-  const DESCRIPTION = description || '익명 피드백으로 나의 직무 강점 찾기';
+  const TITLE = title ? `${title} | Career Evidence Lab` : 'Career Evidence Lab';
+  const DESCRIPTION =
+    description || '프로젝트와 소스 링크를 근거로 반복되는 커리어 강점 패턴을 정리합니다.';
   const URL = BASE_URL + router.asPath;
   const IMAGE = ogImage || DEFAULT_OG_IMAGE;
 

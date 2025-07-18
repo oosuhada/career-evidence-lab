@@ -9,15 +9,7 @@ const nextConfig = {
   env: {
     WEB_VERSION: version,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  experimental: {
-    appDir: false,
-    forceSwcTransforms: true,
-  },
   pageExtensions: ['page.tsx', 'page.ts', 'api.tsx', 'api.ts'],
-  swcMinify: true,
   compiler: {
     emotion: true,
     reactRemoveProperties: isProd && {
@@ -27,9 +19,6 @@ const nextConfig = {
       exclude: ['error', 'warn'],
     },
   },
-  sentry: {
-    hideSourceMaps: true,
-  },
   transpilePackages: ['react-hotjar'],
 };
 
@@ -38,8 +27,6 @@ const sentryWebpackPluginOptions = {
   authToken: process.env.NEXT_PUBLIC_SENTRY_AUTH_TOKEN,
 };
 
-module.exports = () => {
-  const plugins = [[withSentryConfig, sentryWebpackPluginOptions]];
-
-  return plugins.reduce((acc, cur) => cur[0](acc, cur[1] ?? undefined), nextConfig);
-};
+module.exports = process.env.SENTRY_AUTH_TOKEN || process.env.NEXT_PUBLIC_SENTRY_AUTH_TOKEN
+  ? withSentryConfig(nextConfig, sentryWebpackPluginOptions)
+  : nextConfig;

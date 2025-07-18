@@ -1,12 +1,11 @@
-/* eslint-disable unicorn/filename-case */
-import { ImageResponse, type NextRequest } from 'next/server';
+ 
+import { ImageResponse } from 'next/og';
+import { type NextRequest } from 'next/server';
 
 import { type Group } from '~/utils/resultLogic';
 
-type ImageOptions = ConstructorParameters<typeof ImageResponse>[1];
-
 export const config = {
-  runtime: 'edge',
+  runtime: 'nodejs',
 };
 
 export default async function handler(req: NextRequest) {
@@ -22,19 +21,6 @@ export default async function handler(req: NextRequest) {
     }
 
     // TODO: 이미지 크기 및 위치 조절
-    const imageOptions: ImageOptions = {
-      width: 375,
-      height: 666,
-      fonts: [
-        {
-          name: 'Noto Sans KR',
-          data: notoSansScFont700,
-          weight: 700,
-          style: 'normal',
-        },
-      ],
-    };
-
     return new ImageResponse(
       (
         <div
@@ -81,9 +67,20 @@ export default async function handler(req: NextRequest) {
           </span>
         </div>
       ),
-      imageOptions,
+      {
+        width: 375,
+        height: 666,
+        fonts: [
+          {
+            name: 'Noto Sans KR',
+            data: notoSansScFont700,
+            weight: 700,
+            style: 'normal',
+          },
+        ],
+      },
     );
-  } catch (error: unknown) {
+  } catch {
     return new Response('Failed to generate image', { status: 500 });
   }
 }

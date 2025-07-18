@@ -15,7 +15,7 @@ export const imageShare = async (imageUrl: string): Promise<boolean> => {
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       navigator.share({
         title: '나만의 커리어 명함',
-        text: `Na Lab | 동료의 익명 피드백으로 발견하는 나만의 커리어 DNA`,
+        text: `Career Evidence Lab | 프로젝트 증거로 발견하는 커리어 패턴`,
         files: [file],
       });
 

@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://www.nalab.me
+Host: https://career-evidence.oosu.dev
 
 # Sitemaps
-Sitemap: https://www.nalab.me/sitemap.xml
+Sitemap: https://career-evidence.oosu.dev/sitemap.xml
