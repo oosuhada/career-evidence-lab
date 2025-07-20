@@ -1,52 +1,46 @@
-# Career Evidence Lab
+# Na Lab
 
-Career Evidence Lab is a personal career-analysis workspace that turns concrete project evidence into a traceable map of strengths.
+동료의 익명 피드백을 통해 자신의 직무 강점을 발견하고 커리어 DNA를 정리하는 **Na Lab** 웹 클라이언트 복원본입니다. 원래 디자인과 survey → feedback → result → DNA 흐름을 유지하면서 최신 Next.js/Node 환경에서 다시 빌드 가능하도록 정리했습니다.
 
-Instead of starting from self-descriptions, the product records what was actually built, changed, shipped, or learned and keeps a source beside each claim. GitHub repositories can be imported directly so README content, repository metadata, languages, and topics become evidence candidates rather than disconnected portfolio links.
+> 기존 팀 프로젝트의 개인 개발자 목록과 연락처는 README에서 제거했습니다. 원래 제품명, 화면, 기능 구조는 보존했습니다.
 
-## Product preview
+## Restored preview
 
-| Evidence-first home | Evidence workspace |
-| --- | --- |
-| ![Career Evidence Lab home](.github/assets/portfolio/career-evidence-home.png) | ![Career Evidence Lab evidence workspace](.github/assets/portfolio/career-evidence-workspace.png) |
+![Na Lab restored home](.github/assets/portfolio/na-lab-home.png)
 
-두 캡처는 Next.js production build를 직접 실행해 촬영했습니다. 홈에서는 제품의 evidence-first 진입점을, workspace에서는 수동 기록과 GitHub source import를 같은 분석 흐름에서 다루는 화면을 확인할 수 있습니다.
+위 이미지는 Next.js production build를 실제 실행한 뒤 430×932 viewport에서 캡처한 원래 홈 화면입니다.
 
-## Core flow
+## Product flow
 
-1. Add evidence manually or import it from GitHub.
-2. Keep the original source URL attached to every evidence item.
-3. Tag recurring behaviours such as product thinking, problem solving, rapid prototyping, user empathy, technical ownership, and communication.
-4. Review the aggregate pattern instead of relying on a single project or feedback item.
+1. 질문 폼을 생성합니다.
+2. 링크를 공유해 동료 피드백을 받습니다.
+3. 응답 결과를 정리해 강점과 피드백을 확인합니다.
+4. 결과를 DNA/공유 이미지 형태로 활용합니다.
 
-## GitHub evidence connector
-
-`/api/github-evidence` reads public GitHub repository metadata and README content and returns evidence candidates with source URLs. Set `GITHUB_TOKEN` on the server to support authenticated requests and private repositories. The token is never sent to the browser.
+주요 라우트에는 survey, feedback, result, review, gallery, DNA 화면이 포함됩니다.
 
 ## Stack
 
-- Next.js 16.3.3 / React 18 / TypeScript 5.4
+- Next.js 16.3.3
+- React 18
+- TypeScript
 - Emotion
-- React Query
-- Vitest / Playwright
-- GitHub REST API
+- TanStack React Query
+- Vitest
 
-## Local development
+## Run
 
 ```bash
 corepack enable
 yarn install
-yarn dev
-```
-
-Production build:
-
-```bash
 yarn build
+yarn test --run
 ```
 
-## Deployment
+현재 복원본 검증 결과:
 
-Portfolio deployment: `https://career-evidence.oosu.dev`
+- production build — success
+- test files — 26 passed
+- tests — 120 passed
 
-The current repository is the personal product branch of the idea: the primary workflow is evidence capture, source traceability, GitHub import, and recurring-strength analysis.
+일부 인증·분석·외부 서비스 연동은 실제 운영 credential을 저장소에 포함하지 않으므로 로컬 환경에 별도 설정이 필요합니다.

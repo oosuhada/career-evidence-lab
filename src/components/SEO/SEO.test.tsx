@@ -27,7 +27,7 @@ describe('components/SEO/SEO', () => {
   afterEach(cleanup);
 
   describe('title', () => {
-    const DEFAULT_TITLE = 'Career Evidence Lab';
+    const DEFAULT_TITLE = '나의 커리어 DNA 연구소 Na Lab';
 
     test('기본 title이 적용되어 있어야 한다', () => {
       renderAtHead(<SEO />);
@@ -39,7 +39,7 @@ describe('components/SEO/SEO', () => {
 
     test('title prop이 적용되어야 한다', () => {
       const MOCK_TITLE = 'mock title';
-      const CORRECT_TITLE = `${MOCK_TITLE} | Career Evidence Lab`;
+      const CORRECT_TITLE = `${MOCK_TITLE} | 나랩`;
       renderAtHead(<SEO title={MOCK_TITLE} />);
 
       expect(document.title).toBe(CORRECT_TITLE);
@@ -49,7 +49,7 @@ describe('components/SEO/SEO', () => {
   });
 
   describe('description', () => {
-    const DEFAULT_DESCRIPTION = '프로젝트와 소스 링크를 근거로 반복되는 커리어 강점 패턴을 정리합니다.';
+    const DEFAULT_DESCRIPTION = '익명 피드백으로 나의 직무 강점 찾기';
 
     test('기본 description이 적용되어 있어야 한다', () => {
       renderAtHead(<SEO />);
