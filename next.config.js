@@ -24,9 +24,9 @@ const nextConfig = {
 
 const sentryWebpackPluginOptions = {
   silent: true,
-  authToken: process.env.NEXT_PUBLIC_SENTRY_AUTH_TOKEN,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
 };
 
-module.exports = process.env.SENTRY_AUTH_TOKEN || process.env.NEXT_PUBLIC_SENTRY_AUTH_TOKEN
+module.exports = process.env.SENTRY_AUTH_TOKEN
   ? withSentryConfig(nextConfig, sentryWebpackPluginOptions)
   : nextConfig;

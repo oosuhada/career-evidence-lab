@@ -44,7 +44,7 @@ export default NextAuth({
         })
       : KakaoProvider({
           clientId: process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID,
-          clientSecret: process.env.NEXT_PUBLIC_KAKAO_CLIENT_SECRET,
+          clientSecret: process.env.KAKAO_CLIENT_SECRET,
         }),
   ],
 });

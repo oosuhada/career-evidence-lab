@@ -6,7 +6,7 @@ namespace NodeJS {
     NEXT_PUBLIC_HOTJAR_ID: string;
     NEXT_PUBLIC_HOTJAR_SV: string;
     NEXT_PUBLIC_KAKAO_CLIENT_ID: string;
-    NEXT_PUBLIC_KAKAO_CLIENT_SECRET: string;
+    KAKAO_CLIENT_SECRET: string;
     CLOUDFLARE_ENV: string;
     NEXTAUTH_URL: string;
     NEXTAUTH_SECRET: string;
