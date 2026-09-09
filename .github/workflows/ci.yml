@@ -11,6 +11,8 @@ env:
   CACHED_BUILD_PATHS: ${{ github.workspace }}/.next
   BUILD_CACHE_KEY: ${{ github.sha }}
   DEFAULT_NODE_VERSION: '20'
+  HUSKY: '0'
+  COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'
 
 jobs:
   job_install_dependencies:
@@ -21,13 +23,13 @@ jobs:
       - name: Check out current commit (${{ github.sha }})
         uses: actions/checkout@v3
       - name: Set up Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.DEFAULT_NODE_VERSION }}
 
       - name: Compute dependency cache key
         id: compute_lockfile_hash
-        run: echo "::set-output name=hash::${{ hashFiles('yarn.lock') }}"
+        run: echo "hash=${{ hashFiles('yarn.lock') }}" >> "$GITHUB_OUTPUT"
 
       - name: Check dependency cache
         uses: actions/cache@v3
@@ -37,8 +39,9 @@ jobs:
           key: ${{ steps.compute_lockfile_hash.outputs.hash }}
 
       - name: Install dependencies
-        if: steps.cache_dependencies.outputs.cache-hit == false
-        run: yarn install --immutable
+        run: |
+          corepack enable
+          yarn install --immutable
     outputs:
       dependency_cache_key: ${{ steps.compute_lockfile_hash.outputs.hash }}
 
@@ -52,7 +55,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.DEFAULT_NODE_VERSION }}
 
@@ -71,7 +74,10 @@ jobs:
 
       - name: Build
         if: steps.cache_built_packages.outputs.cache-hit == false
-        run: yarn build
+        run: |
+          corepack enable
+          yarn install --immutable
+          yarn build
 
     outputs:
       dependency_cache_key: ${{ needs.job_install_dependencies.outputs.dependency_cache_key }}
@@ -86,7 +92,7 @@ jobs:
       - name: Check out current commit (${{ github.sha }})
         uses: actions/checkout@v3
       - name: Set up Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.DEFAULT_NODE_VERSION }}
 
@@ -97,7 +103,10 @@ jobs:
           key: ${{ needs.job_install_dependencies.outputs.dependency_cache_key }}
 
       - name: Run codechecks
-        run: yarn codechecks
+        run: |
+          corepack enable
+          yarn install --immutable
+          yarn codechecks
         env:
           CC_SECRET: ${{ secrets.CC_SECRET }}
 
@@ -110,9 +119,14 @@ jobs:
       - name: Check out current commit (${{ github.sha }})
         uses: actions/checkout@v3
       - name: Set up Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.DEFAULT_NODE_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          corepack enable
+          yarn install --immutable
 
       - name: Check dependency cache
         uses: actions/cache@v3
@@ -141,7 +155,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.DEFAULT_NODE_VERSION }}
 
@@ -152,7 +166,10 @@ jobs:
           key: ${{ needs.job_install_dependencies.outputs.dependency_cache_key }}
 
       - name: Create Unit Test Coverage
-        run: yarn test:coverage
+        run: |
+          corepack enable
+          yarn install --immutable
+          yarn test:coverage
 
       - name: Set unit test coverage
         uses: codecov/codecov-action@v3
@@ -170,7 +187,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.DEFAULT_NODE_VERSION }}
 
@@ -181,7 +198,10 @@ jobs:
           key: ${{ needs.job_install_dependencies.outputs.dependency_cache_key }}
 
       - name: Install Playwright Browsers
-        run: yarn playwright install --with-deps
+        run: |
+          corepack enable
+          yarn install --immutable
+          yarn playwright install --with-deps
 
       - name: Run Playwright tests
         run: yarn test:e2e
@@ -203,7 +223,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.DEFAULT_NODE_VERSION }}
 
