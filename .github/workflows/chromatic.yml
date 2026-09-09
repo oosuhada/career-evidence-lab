@@ -9,9 +9,11 @@ on:
 jobs:
   chromatic-deployment:
     runs-on: ubuntu-latest
+    env:
+      CHROMATIC_TOKEN: ${{ secrets.CHROMATIC_TOKEN }}
     steps:
       - name: actions/checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -22,7 +24,12 @@ jobs:
         run: yarn install --immutable
 
       - name: Publish to Chromatic
+        if: env.CHROMATIC_TOKEN != ''
         uses: chromaui/action@v1
         with:
           projectToken: ${{ secrets.CHROMATIC_TOKEN }}
           buildScriptName: sb:build
+
+      - name: Chromatic skipped
+        if: env.CHROMATIC_TOKEN == ''
+        run: echo "Chromatic project token is not configured; skipping visual publish."
